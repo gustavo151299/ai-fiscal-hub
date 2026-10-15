@@ -1,0 +1,19 @@
+# Dependencias do sistema que roda hoje: painel + robo.
+#   py -m pip install -r requirements.txt
+
+# Painel (interface/painel/app.py) - faltava aqui, e sem Flask o painel nem sobe
+Flask>=3.0
+waitress>=3.0          # servidor de producao; sem ele cai no Flask embutido
+
+# Banco (painel e robo)
+oracledb>=2.0
+
+# Comparador de produtos do De/Para (core/ai_matcher.py).
+# Sem ele o sistema roda, mas reconhece MENOS itens - e avisa no console.
+rapidfuzz>=3.0
+
+# O assistente de IA (core/ai_gemini.py) NAO precisa de biblioteca: usa a
+# urllib do proprio Python. Depende so da GEMINI_API_KEY.
+
+# SQLAlchemy saiu daqui: era usado so por database/models.py, que faz parte da
+# versao antiga (nao e usada pelo painel nem pelo robo).

@@ -1,0 +1,41 @@
+# ============================================================================
+#  O QUE NUNCA VAI PARA O REPOSITORIO PUBLICO
+#
+#  Cada bloco abaixo existe por um motivo concreto, verificado no projeto.
+#  Os arquivos continuam no disco: eles so nao sao versionados.
+# ============================================================================
+
+# --- 1. CREDENCIAIS -------------------------------------------------------
+# Senha do banco, endpoint do RDS e chave de IA. E o unico lugar onde o
+# segredo pode existir, e ele nao acompanha o codigo.
+CONFIG_LOCAL.bat
+CONFIG_PRODUCAO_LEITURA.bat
+.env
+*.env
+!*.EXEMPLO.bat
+
+# --- 2. TRANSCRICOES DE TRABALHO ------------------------------------------
+# Contem a senha do banco EM TEXTO PURO e os endpoints do RDS de homologacao
+# e de producao, colados durante a investigacao. Verificado: 3 arquivos.
+docs/transcricao/
+docs/TRANSCRICAO_COMPLETA.pdf
+
+# --- 3. MATERIAL PROPRIETARIO DO FORNECEDOR DO ERP ------------------------
+# Manuais em PDF da Teknisa (11 MB). Sao obra de terceiro: republicar seria
+# violacao de direito autoral, independente de conterem dado sensivel.
+base_conhecimento/
+
+# --- 4. DADO REAL DE PRODUCAO ---------------------------------------------
+# Script de demonstracao com chaves de NF-e reais e UPDATE em tabela do ERP.
+desfazer_demo.sql
+vitrine.html
+*.log
+
+# --- 5. SAIDA DE EXECUCAO E AMBIENTE --------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.json.out
+scratchpad/
+termos_sensiveis.txt

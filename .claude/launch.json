@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "painel-consulta",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "interface\\painel\\INICIAR_PAINEL.bat"],
+      "port": 5000
+    },
+    {
+      "name": "painel-escrita",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "interface\\painel\\INICIAR_PAINEL_ESCRITA.bat"],
+      "port": 5000
+    }
+  ]
+}

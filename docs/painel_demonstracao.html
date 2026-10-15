@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Fiscal Hub — Demonstração</title>
+<style>
+  :root{
+    --bg:#f4f5f7; --card:#fff; --ink:#1c2430; --muted:#6b7684; --line:#e3e7ec;
+    --accent:#1f5fa8; --accent-bg:#e7f0fb; --ok:#1d7a4d; --ok-bg:#e4f4ec;
+    --warn:#9a6a00; --warn-bg:#fbf1da; --navy:#12325a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:38px;height:38px;border-radius:9px;background:#1f5fa8;display:flex;align-items:center;justify-content:center;font-size:20px}
+  .brand h1{font-size:16px;font-weight:600}
+  .brand p{font-size:12px;opacity:.8}
+  .pill{font-size:12px;padding:5px 12px;border-radius:20px;background:var(--warn-bg);color:var(--warn);font-weight:600}
+  nav{background:#fff;border-bottom:1px solid var(--line);padding:0 22px;display:flex;gap:4px}
+  nav button{background:none;border:none;padding:13px 16px;font-size:14px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+  nav button.on{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+  main{padding:22px;max-width:1000px;margin:0 auto}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi .lbl{font-size:12px;color:var(--muted)}
+  .kpi .val{font-size:28px;font-weight:600;margin-top:2px}
+  .kpi.ok .val{color:var(--ok)} .kpi.ac .val{color:var(--accent)} .kpi.wn .val{color:var(--warn)}
+  .bar{display:flex;gap:10px;margin-bottom:16px}
+  .btn{background:var(--navy);color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:500}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.5;cursor:default}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .row{display:flex;align-items:center;gap:14px;padding:13px 16px;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+  .ic.ok{background:var(--ok-bg);color:var(--ok)} .ic.ac{background:var(--accent-bg);color:var(--accent)} .ic.wn{background:var(--warn-bg);color:var(--warn)}
+  .row .main{flex:1;min-width:0}
+  .row .t{font-weight:600;font-size:14px}
+  .row .s{font-size:12px;color:var(--muted)}
+  .tag{font-size:11px;padding:4px 10px;border-radius:20px;white-space:nowrap;font-weight:600}
+  .tag.ok{background:var(--ok-bg);color:var(--ok)} .tag.ac{background:var(--accent-bg);color:var(--accent)} .tag.wn{background:var(--warn-bg);color:var(--warn)}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);font-size:13px}
+  th{background:#fafbfc;color:var(--muted);font-weight:600;font-size:12px}
+  .sec-h{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .hide{display:none}
+  .teams{margin-top:18px}
+  .teamscard{background:#fff;border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:0 10px 10px 0;padding:14px 16px}
+  .teamscard h4{font-size:14px;margin-bottom:10px}
+  .teamscard table td{border:none;padding:4px 0}
+  .teamsbtns{display:flex;gap:8px;margin-top:12px}
+  .teamsbtns .btn{padding:8px 14px;font-size:13px}
+  .modal-bg{background:rgba(18,32,48,.5);min-height:520px;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modal{background:#fff;border-radius:12px;max-width:560px;width:100%;overflow:hidden}
+  .modal .mh{background:var(--navy);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center}
+  .modal .mb{padding:18px}
+  .step{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border:none}
+  .step .n{width:24px;height:24px;border-radius:50%;background:var(--ok-bg);color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+  .foot{text-align:center;color:var(--muted);font-size:12px;padding:16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo">🤖</div>
+    <div><h1>AI Fiscal Hub</h1><p>o cliente · Recebimento automático de NF · Teknisa</p></div>
+  </div>
+  <div class="pill" id="modo">● Modo sombra</div>
+</header>
+
+<nav>
+  <button class="on" data-t="painel">Painel</button>
+  <button data-t="fila">Fila de notas</button>
+  <button data-t="depara">De/Para aprendido</button>
+  <button data-t="log">Auditoria</button>
+</nav>
+
+<main>
+  <!-- PAINEL -->
+  <section id="painel">
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Na fila</div><div class="val" id="k-fila">6</div></div>
+      <div class="kpi ok"><div class="lbl">Liberadas hoje</div><div class="val" id="k-ok">0</div></div>
+      <div class="kpi ac"><div class="lbl">De/Para gravados</div><div class="val" id="k-dp">0</div></div>
+      <div class="kpi wn"><div class="lbl">Para revisão</div><div class="val" id="k-rev">0</div></div>
+    </div>
+    <div class="bar">
+      <button class="btn" id="run">▶ Rodar varredura</button>
+      <button class="btn ghost" id="reset">Reiniciar</button>
+    </div>
+    <p class="sec-h">Atividade da varredura</p>
+    <div class="card" id="feed"><div class="row"><div class="s" style="color:var(--muted)">Clique em “Rodar varredura” para simular o robô processando a fila.</div></div></div>
+    <div class="teams hide" id="teams">
+      <p class="sec-h">Notificação enviada ao Teams</p>
+      <div class="teamscard">
+        <h4>⚠️ Ação humana requerida · NF 174015</h4>
+        <table>
+          <tr><td style="color:var(--muted);width:130px">Fornecedor</td><td>FORNECEDOR A ALIMENTOS LTDA</td></tr>
+          <tr><td style="color:var(--muted)">Item do XML</td><td>LINGUICA CALABRESA MESTA PCT 5KG</td></tr>
+          <tr><td style="color:var(--muted)">Sugestão da IA</td><td>1234567 · LINGUICA CALABRESA</td></tr>
+          <tr><td style="color:var(--muted)">Confiança</td><td style="color:var(--warn);font-weight:600">88,4%</td></tr>
+        </table>
+        <div class="teamsbtns">
+          <button class="btn" onclick="alert('Simulação: a NF seria liberada e o vínculo gravado como CONFIRMADO_HUMANO.')">✅ Aprovar e liberar</button>
+          <button class="btn ghost" onclick="alert('Simulação: abriria a tela para escolher outro código de produto.')">🔍 Alterar código</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILA -->
+  <section id="fila" class="hide">
+    <p class="sec-h">Notas na fila (clique para ver o detalhe do processamento)</p>
+    <div class="card" id="filaList"></div>
+  </section>
+
+  <!-- DEPARA -->
+  <section id="depara" class="hide">
+    <p class="sec-h">Relacionamentos que o robô aprendeu (tabela PRODFORNXML)</p>
+    <div class="card"><table>
+      <thead><tr><th>Fornecedor</th><th>Item no XML</th><th>Produto interno</th><th>Origem</th></tr></thead>
+      <tbody>
+        <tr><td>LATICINIOS MG</td><td>QUEIJO MUSSARELA FATIADO 2KG</td><td>3020200900</td><td><span class="tag ac">Auto IA · 97%</span></td></tr>
+        <tr><td>CAFE SERRA</td><td>CAFE TORRADO MOIDO PCT 500G</td><td>2011113300</td><td><span class="tag ac">Auto IA · 96%</span></td></tr>
+        <tr><td>FORNECEDOR A ALIMENTOS</td><td>LINGUICA CALABRESA MESTA PCT 5KG</td><td>1234588</td><td><span class="tag ok">Confirmado humano</span></td></tr>
+        <tr><td>DOCES DEL REY</td><td>DOCE DE LEITE POTE 400G</td><td>4055012000</td><td><span class="tag ac">Auto IA · 99%</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- LOG -->
+  <section id="log" class="hide">
+    <p class="sec-h">Log de auditoria (tabela AIHUB_PROC_LOG)</p>
+    <div class="card"><table>
+      <thead><tr><th>Hora</th><th>NF</th><th>Fornecedor</th><th>AF</th><th>Status</th><th>ms</th></tr></thead>
+      <tbody id="logBody"></tbody>
+    </table></div>
+  </section>
+
+  <!-- MODAL -->
+  <div id="modalWrap" class="hide"><div class="modal-bg" id="modalBg">
+    <div class="modal">
+      <div class="mh"><span id="mTitle">NF</span><span style="cursor:pointer" onclick="closeModal()">✕</span></div>
+      <div class="mb" id="mBody"></div>
+    </div>
+  </div></div>
+
+  <div class="foot">Demonstração — dados fictícios. Reflete o comportamento após instalação e homologação. Enquanto em modo sombra, o robô sugere e o operador aprova.</div>
+</main>
+
+<script>
+var notas=[
+  {nf:"174012",forn:"IBPTI DISTRIB.",af:"0001459386",via:"infCpl",tipo:"ok"},
+  {nf:"174013",forn:"FRIGO SUL LTDA",af:"0001449581",via:"xPed",tipo:"ok"},
+  {nf:"174014",forn:"LATICINIOS MG",af:"0001449500",via:"infCpl",tipo:"dp"},
+  {nf:"174015",forn:"FORNECEDOR A ALIMENTOS",af:"253086755",via:"infCpl",tipo:"rev"},
+  {nf:"174016",forn:"DOCES DEL REY",af:"0001449581",via:"xPed",tipo:"ok"},
+  {nf:"174017",forn:"CAFE SERRA",af:"0001449500",via:"infCpl",tipo:"dp"}
+];
+var meta={
+  ok:{c:"ok",i:"✓",tx:"Liberada — sem inconsistência"},
+  dp:{c:"ac",i:"⇄",tx:"De/Para gravado · liberada"},
+  rev:{c:"wn",i:"!",tx:"Match 88% · enviada p/ revisão"}
+};
+// navegação
+document.querySelectorAll('nav button').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on');
+    ['painel','fila','depara','log'].forEach(function(s){document.getElementById(s).classList.add('hide')});
+    document.getElementById(b.dataset.t).classList.remove('hide');
+  };
+});
+// fila estática
+var fl=document.getElementById('filaList');
+notas.forEach(function(n){
+  var m=meta[n.tipo];
+  var d=document.createElement('div');d.className='row';d.style.cursor='pointer';
+  d.innerHTML='<div class="ic '+m.c+'">'+m.i+'</div><div class="main"><div class="t">NF '+n.nf+' · '+n.forn+'</div><div class="s">AF '+n.af+' · lida via '+n.via+'</div></div><span class="tag '+m.c+'">'+m.tx+'</span>';
+  d.onclick=function(){openModal(n)};
+  fl.appendChild(d);
+});
+// modal detalhe
+function openModal(n){
+  var passos=[
+    'Leu o XML e localizou a AF '+n.af+' (via '+n.via+')',
+    'Resolveu o fornecedor no cadastro (CNPJ → CDFORNECED)',
+    n.tipo==='dp'?'Item sem De/Para → gravou o vínculo automático (≥95%)':(n.tipo==='rev'?'Item com match 88% → NÃO decidiu, enviou ao Teams':'Itens já relacionados'),
+    n.tipo==='rev'?'Aguardando decisão humana':'Vinculou à AF (NF_BAIXA_AF) e validou (VERIFICA_INCONS_NF)',
+    n.tipo==='rev'?'—':'Confirmada (CONFIRMACAO_AUTOMATICA_NF) · DTAPROVACAO preenchida'
+  ];
+  document.getElementById('mTitle').textContent='NF '+n.nf+' · '+n.forn;
+  var html='';
+  passos.forEach(function(p,i){ if(p==='—')return;
+    html+='<div class="step"><div class="n">'+(i+1)+'</div><div>'+p+'</div></div>';
+  });
+  document.getElementById('mBody').innerHTML=html;
+  document.getElementById('modalWrap').classList.remove('hide');
+}
+function closeModal(){document.getElementById('modalWrap').classList.add('hide')}
+document.getElementById('modalBg').onclick=function(e){if(e.target.id==='modalBg')closeModal()};
+// varredura animada
+var feed=document.getElementById('feed'),run=document.getElementById('run');
+function scan(){
+  run.disabled=true;run.textContent='Processando…';
+  feed.innerHTML='';document.getElementById('teams').classList.add('hide');
+  var i=0,ok=0,dp=0,rev=0;
+  var logB=document.getElementById('logBody');logB.innerHTML='';
+  (function step(){
+    if(i>=notas.length){run.disabled=false;run.textContent='▶ Rodar varredura';return;}
+    var n=notas[i++],m=meta[n.tipo];
+    var d=document.createElement('div');d.className='row';d.style.opacity=0;d.style.transition='opacity .3s';
+    d.innerHTML='<div class="ic '+m.c+'">'+m.i+'</div><div class="main"><div class="t">NF '+n.nf+' · '+n.forn+'</div><div class="s">AF '+n.af+' · via '+n.via+'</div></div><span class="tag '+m.c+'">'+m.tx+'</span>';
+    feed.appendChild(d);requestAnimationFrame(function(){d.style.opacity=1});
+    if(n.tipo==='ok')ok++; if(n.tipo==='dp'){ok++;dp++} if(n.tipo==='rev'){rev++;document.getElementById('teams').classList.remove('hide')}
+    var st=n.tipo==='ok'?'FAST_TRACK_OK':(n.tipo==='dp'?'CORRIGIDO_E_APROVADO_IA':'REQUER_ATENCAO');
+    var stc=n.tipo==='rev'?'wn':(n.tipo==='dp'?'ac':'ok');
+    var hh='14:'+(45+i<60?('0'+(45+i)).slice(-2):'0'+(45+i-60));
+    logB.insertAdjacentHTML('afterbegin','<tr><td>'+hh+'</td><td>'+n.nf+'</td><td>'+n.forn+'</td><td>'+n.af+'</td><td><span class="tag '+stc+'">'+st+'</span></td><td>'+(180+Math.floor(Math.random()*400))+'</td></tr>');
+    document.getElementById('k-fila').textContent=notas.length-i;
+    document.getElementById('k-ok').textContent=ok;
+    document.getElementById('k-dp').textContent=dp;
+    document.getElementById('k-rev').textContent=rev;
+    setTimeout(step,750);
+  })();
+}
+run.onclick=scan;
+document.getElementById('reset').onclick=function(){
+  feed.innerHTML='<div class="row"><div class="s" style="color:var(--muted)">Clique em “Rodar varredura” para simular o robô processando a fila.</div></div>';
+  document.getElementById('teams').classList.add('hide');
+  ['k-fila','k-ok','k-dp','k-rev'].forEach(function(id,ix){document.getElementById(id).textContent=ix===0?6:0});
+  document.getElementById('logBody').innerHTML='';
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+Testes automaticos (nao precisam de banco de verdade):
+  py testes\simular_robo.py     -> 16 cenarios do robo (fluxo real, banco falso)
+  py testes\simular_painel.py   -> 40 testes de matcher, classificacao e erros
+  py testes\tipos_oracle.py     -> 6 tipos que o Oracle devolve (inclui CLOB)
+  py testes\conferir_binds.py interface\painel\app.py robo\servico_robo.py
+Todos devem terminar sem falhas.
